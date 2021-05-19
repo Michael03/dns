@@ -12,4 +12,10 @@ defmodule DnsResponseTest do
     assert dns_packet.header.qdcount == 1
     assert length(dns_packet.questions) == 1
   end
+
+  test "answers are parsed", %{dns_packet: dns_packet} do
+    assert length(dns_packet.questions) == 1
+    answer = Enum.at(dns_packet.answers, 0)
+    assert answer.name === "google.com"
+  end
 end

@@ -26,8 +26,8 @@ defmodule QuestionResponseTest do
   end
 
   test "Remaining returned after question parsed", _ do
-        [_header, remaining] = File.read!(@filePath) |> Header.parse()
-        [_question, remaining] = Question.parse(remaining)
-        assert bit_size(remaining) == 128
+    [_header, remaining] = File.read!(@filePath) |> Header.parse()
+    [_question, remaining] = Question.parse(remaining)
+    assert bit_size(remaining) == 128
   end
 end

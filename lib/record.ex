@@ -13,54 +13,42 @@ defmodule Record do
 
   """
   defstruct [
-    :id,
-    :qr,
-    :opcode,
-    :aa,
-    :tc,
-    :rd,
-    :ra,
-    :z,
-    :rdcode,
-    :qdcount,
-    :ancount,
-    :nscount,
-    :arcount
+    :name
   ]
 
   def parse(<<
-        id::size(16),
-        qr::size(1),
-        opcode::size(4),
-        aa::size(1),
-        tc::size(1),
-        rd::size(1),
-        ra::size(1),
-        z::size(3),
-        rdcode::size(4),
-        qdcount::size(16),
-        ancount::size(16),
-        nscount::size(16),
-        arcount::size(16),
+        1::size(1),
+        1::size(1),
         remaining::bitstring
       >>) do
     [
-      %Header{
-        id: id,
-        qr: qr,
-        opcode: opcode,
-        aa: aa,
-        tc: tc,
-        rd: rd,
-        ra: ra,
-        z: z,
-        rdcode: rdcode,
-        qdcount: qdcount,
-        ancount: ancount,
-        nscount: nscount,
-        arcount: arcount
+      %Record{
+        name: "qname"
       },
       remaining
     ]
+  end
+
+  def parse(<<
+        length::size(8),
+        name::binary-size(length),
+        0::size(8),
+        remaining::bitstring
+      >>) do
+    [
+      %Record{
+        name: name
+      },
+      remaining
+    ]
+  end
+
+  def parse(<<
+        length::size(8),
+        name::binary-size(length),
+        remaining::bitstring
+      >>) do
+    [record, remaining] = parse(remaining)
+    [%{record | name: name <> "." <> record.name}, remaining]
   end
 end

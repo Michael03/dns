@@ -1,23 +1,24 @@
-# defmodule Dns do
-#   @moduledoc """
-#   Documentation for `Dns`.
-#   """
+defmodule Dns do
+  @moduledoc """
+  Documentation for `Dns`.
+  """
 
-#   @doc """
-#   Hello world.
+  @doc """
+  Hello world.
 
-#   ## Examples
+  ## Examples
 
-#       iex> Dns.hello()
-#       :world
+      iex> Dns.parse()
+      :world
 
-#   """
-#   def parse do
-    dns_request = IO.read(:stdio, :all) |> DnsPacket.parse()
+  """
+  def parse do
+    :world
+    # dns_request = IO.read(:stdio, :all) |> DnsPacket.parse()
 
-    # IO.puts dns_request.questions[0]
-    # dns_request = File.read!("./test/request/request") |> DnsPacket.parse()
-    question = Enum.at(dns_request.questions, 0)
-    IO.puts("Question is " <> question.name)
-#   end
-# end
+    # # IO.puts dns_request.questions[0]
+    # # dns_request = File.read!("./test/request/request") |> DnsPacket.parse()
+    # question = Enum.at(dns_request.questions, 0)
+    # IO.puts("Question is " <> question.name)
+  end
+end

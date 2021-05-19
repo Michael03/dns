@@ -21,28 +21,17 @@ defmodule DnsPacket do
   """
   def parse(request) do
     [header, remaining] = Header.parse(request)
-     questions =  Enum.map(1..header.qdcount, fn _i ->
-        [question, remaining] = Question.parse(remaining)
-        question
-      end)
 
-    answers =
-      Enum.map(1..header.ancount, fn _i ->
-        [answer, remaining] =  Record.parse(remaining)
-        answer
-      end)
+    # questions = []
+    # [questions, remaining] = for i <- 0..header.qdcount, i > 0 do
+    #    [question, remaining] = Question.parse(remaining)
+    #    questions = [question| questions]
+    # end
+    [questions, remaining] = parse_questions(header.qdcount, remaining)
 
-    authoritive =
-      Enum.map(1..header.nscount, fn _i ->
-        [answer, remaining] =  Record.parse(remaining)
-        answer
-      end)
-
-    additional =
-      Enum.map(1..header.arcount, fn _i ->
-        [answer, remaining] =  Record.parse(remaining)
-        answer
-      end)
+    [answers, remaining] = parse_records(header.ancount, remaining)
+    [authoritive, remaining] = parse_records(header.nscount, remaining)
+    [additional, _remaining] = parse_records(header.arcount, remaining)
 
     %DnsPacket{
       header: header,
@@ -51,5 +40,26 @@ defmodule DnsPacket do
       authoritive: authoritive,
       additional: additional
     }
+  end
+
+  defp parse_questions(0, remaining) do
+    [[], remaining]
+  end
+
+  defp parse_questions(count_remaining, remaining) do
+    [question, remaining] = Question.parse(remaining)
+    [questions, remaining] = parse_questions(count_remaining - 1, remaining)
+    [[question | questions], remaining]
+  end
+
+
+  defp parse_records(0, remaining) do 
+    [[], remaining]
+  end
+
+  defp parse_records(count_remaining, remaining) do 
+    [question, remaining] = Record.parse(remaining)
+    [questions, remaining] = parse_records(count_remaining - 1, remaining)
+    [[question | questions], remaining]
   end
 end
